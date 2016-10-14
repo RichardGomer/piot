@@ -1,0 +1,3 @@
+[submodule "pi/lib/quapi"]
+	path = pi/lib/quapi
+	url = https://github.com/RichardGomer/quapi.git
