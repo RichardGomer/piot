@@ -1,12 +1,13 @@
-#!/usr/bin/php
 <?php
 
 namespace GPIO;
 
-abstract class Pin
+class Pin
 {
 	const IN = 1;
 	const OUT = 2;
+
+    protected $wpn;
 
 	/**
          * Constructed with a WiringPi pin number.  But, this is private, so use one of the static methods
@@ -130,6 +131,11 @@ abstract class Pin
 	{
 		$info = self::getPinStatus($this->wpn);
 		return $info;
+	}
+	
+	public function getWPN()
+	{
+	    return $this->wpn;
 	}
 
 	public function getValue()

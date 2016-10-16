@@ -6,10 +6,15 @@
  * Activates/deactivates heating relays as appropriate
  */
  
-if($HEATING_LAST > time() - 30) // Only run every 30s
+if($MOD['HEATING_LAST'] > time() - 30) // Only run every 30s
     return;
 
-$HEATING_LAST = time();
+echo "Check heat status ".date("H:i")."\n";
 
-$HOT_WATER->update();
-$HEATING->update();
+$MOD['HEATING_LAST'] = time();
+
+echo "WATER: ";
+$MOD['HWATER']->update();
+
+echo "HEATING: ";
+$MOD['HEATING']->update();

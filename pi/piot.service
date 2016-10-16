@@ -1,0 +1,17 @@
+[Unit]
+Description=PiOT Framework
+Before=systemd-user-sessions.service
+
+[Service]
+TimeoutStartSec=0
+
+ExecStart=/home/pi/piot/pi/run.sh
+Type=oneshot
+RemainAfterExit=yes
+User=pi
+
+ExecStop=
+User=pi
+
+[Install]
+WantedBy=multi-user.target

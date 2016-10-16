@@ -15,12 +15,12 @@ class Watchdog
     
     public function pat()
     {
-        fwrite('1', $this->devh); // You can write anything to pat the watchdog
+        @fwrite('1', $this->devh); // You can write anything to pat the watchdog
     }
     
     public function disable()
     {
-        fwrite('V', $this->devh); // V is a magic character
+        @fwrite('V', $this->devh); // V is a magic character
     }
 }
 

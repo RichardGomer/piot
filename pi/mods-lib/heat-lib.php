@@ -6,25 +6,30 @@ class TimedRelay
     public function __construct(GPIO\OutputPin $pin, Schedule $schedule, $offState = 1)
     {
         $this->pin = $pin;
-        $this->defaultState = $defaultState;
+        $this->offState = $offState;
+        $this->schedule = $schedule;
         
-        $this->pin->setValue = $this->defaultState;
+        $this->pin->setValue = $this->offState;
     }
     
     public function update()
     {
         $time = time();
         
-        $on = $this->schedule->getState() == 'ON';
+        $state = $this->schedule->getState();
+        $on = $state == 'ON';
+        $value = $on ? !$this->offState : $this->offState;
         
-        $tihs->pin->setValue($on ? !$offState : $offState);
+        echo "STATE: '".$state."'  => PIN ".$this->pin->getWPN().'='.($value ? 1 : 0)."\n";
+        
+        $this->pin->setValue($value ? 1 : 0);
     }
 
 }
 
 class Schedule
 {
-    public function __construct(mods\Store $storage)
+    public function __construct(mods\JsonStore $storage)
     {
         $this->storage = $storage;
         
@@ -52,15 +57,28 @@ class Schedule
         $this->storage->release();
     }
     
+    public function getRanges()
+    {
+        return $this->storage->ranges;
+    }
+    
     // Compare two times in hh:mm format
     // -1 => $a < $b
     // 0 => $a = $b
     // 1 => $a > $b
     protected function timeCmp($a, $b)
     {
+        // Convert unix timestamps to hh:mm format
+        if(is_int($a))
+            $a = date('H:i', $a);
+        
+        if(is_int($b))
+            $b = date('H:i', $b);
+            
         $a = explode(':', $a);
         $b = explode(':', $b);
         
+
         // First compare hours
         if($a[0] > $b[0])
             return 1;
@@ -96,12 +114,14 @@ class Schedule
     // Else return false
     public function getState()
     {
-        $ranges = $this->storage->ranges();
+        $ranges = $this->storage->ranges;
         
         foreach($ranges as $rid=>$r)
         {
             if($this->isRangeActive($r, $rid))
             {
+                //echo "Range $rid is active\n";
+                //var_dump($r);echo "\n\n";
                 return $r['state'];
             }
         }
@@ -109,8 +129,24 @@ class Schedule
         return false;
     }
     
+    public function getActiveRanges()
+    {
+        $ranges = $this->storage->ranges;
+        $out = array();
+        
+        foreach($ranges as $rid=>$r)
+        {
+            if($this->isRangeActive($r, $rid))
+            {
+                $out[] = $r;
+            }
+        }
+        
+        return $out;
+    }
+    
     // See if a single range definition is active
-    protected function isRangeActive($range, $id)
+    public function isRangeActive($range, $id=false)
     {
         // Daily ranges
         if($range['type'] == 'daily')
@@ -118,12 +154,14 @@ class Schedule
             $day = $range['day'];
             $start = $range['start'];
             $end = $range['end'];
-                    
+            
+            $now = date('H:i');
             if($day == false || $day == date('N'))
             {
-                if($this->timeCmp($start, time()) >= 0) // has started
+            
+                if($this->timeCmp($start, $now) < 0) // has started
                 {
-                    if($this->timeCmp($end, time()) < 0) // has not ended
+                    if($this->timeCmp($end, $now) >= 0) // has not ended
                     {
                         return true;
                     }
@@ -131,6 +169,10 @@ class Schedule
                     {
                         return false;
                     }
+                }
+                else
+                {
+                    return false;
                 }
             }
             else
@@ -141,11 +183,11 @@ class Schedule
         // Temporary ranges
         elseif($range['type'] == 'temp')
         {
-            if($range['start'] < time()) // Check if range has started
+            if($range['start'] <= time()) // Check if range has started
             {
                 if($range['end'] <= time()) // Check if range has ended
                 {
-                    $this->delRange($id); // Remove expired range
+                    if($id !== false) $this->delRange($id); // Remove expired range
                     return false;
                 }
                 else

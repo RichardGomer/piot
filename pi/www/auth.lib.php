@@ -2,13 +2,17 @@
 
 namespace PIOT;
 
-class ipAuth implements APIAuth
+class IPAuth implements \QuickAPI\APIAuth
 {
     protected function cidr_match($ip, $cidr)
     {
         list($subnet, $mask) = explode('/', $cidr);
 
-        if ((ip2long($ip) & ~((1 << (32 - $mask)) - 1) ) == ip2long($subnet))
+        $lip = ip2long($ip);
+        $lsub = ip2long($subnet);
+        $lmasked = $lip & ~((1 << (32 - $mask)) - 1);
+        
+        if ($lmasked == $lsub)
         { 
             return true;
         }
@@ -21,9 +25,9 @@ class ipAuth implements APIAuth
         $this->cidr = $cidr;
     }
     
-    public function checkCredentials($args, QuickAPI\APIHandler $handler)
+    public function checkCredentials($args, \QuickAPI\APIHandler $handler)
     {
-        return cidr_match($_SERVER['REMOTE_ADDR'], $this->cidr);
+        return $this->cidr_match($_SERVER['REMOTE_ADDR'], $this->cidr);
     }
 }
 
