@@ -1,3 +1,6 @@
 [submodule "pi/lib/quapi"]
 	path = pi/lib/quapi
 	url = https://github.com/RichardGomer/quapi.git
+[submodule "pi/OregonPi"]
+	path = pi/OregonPi
+	url = https://github.com/RichardGomer/OregonPi.git
