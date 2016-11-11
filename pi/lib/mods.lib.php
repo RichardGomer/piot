@@ -6,6 +6,42 @@
 
 namespace mods;
 
+// Get an array of enabled module names
+function enabledMods()
+{
+    static $mods = false;
+    
+    if($mods !== false)
+        return $mods;
+
+    $mods = array();
+
+    // Load the list from file, the first time it's requested
+    $mcfg = dirname(dirname(__FILE__)).'/mods.conf';
+    if(!file_exists($mcfg))
+    {
+        echo "Cannot get list of enabled modules";
+        exit;
+    }
+    
+    $fc = file_get_contents($mcfg);
+    
+    $fc = explode("\n", $fc);
+    foreach($fc as $line)
+    {
+        @list($content, $comment) = explode('#', $line, 2);
+        
+        $content = trim($content);
+        
+        if(strlen($content) > 1)
+        {
+            $mods[] = $content;
+        }
+    }
+    
+    return $mods;
+}
+
 function runMods($dir='mods-enabled', $vars=array())
 {
     $mods = scandir($dir);
@@ -22,6 +58,11 @@ function runMod($dir, $file, $vars)
 {
     list($modname, $x) = explode('-', $file, 2);
     
+    if(!in_array($modname, enabledMods()))
+    {
+        return;
+    }
+    
     foreach($vars as $n=>$v)
     {
         $$n = $v;
@@ -34,7 +75,7 @@ function runMod($dir, $file, $vars)
     
     $MOD = $GLOBALS['modstate'][$modname];
     
-    //echo "Run module $modname\n";
+    //echo "Run $modname\n";
     //var_dump($MOD);
     
     include $dir.'/'.$file;

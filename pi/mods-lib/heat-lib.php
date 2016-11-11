@@ -159,7 +159,7 @@ class Schedule
             if($day == false || $day == date('N'))
             {
             
-                if($this->timeCmp($start, $now) < 0) // has started
+                if($this->timeCmp($start, $now) <= 0) // has started
                 {
                     if($this->timeCmp($end, $now) >= 0) // has not ended
                     {

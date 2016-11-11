@@ -10,19 +10,26 @@
  */
 
 
-// Lighthttpd should be started for the API automatically...
+// Lighttpd should be started for the API automatically...
 
 require 'common.php';
 
-echo "#### PIOT ####\n\nInterfaces\n";
+echo "#### PIOT ####\n\nINTERFACES:\n";
 echo passthru('/sbin/ifconfig |grep -B1 "inet addr" |awk \'{ if ( $1 == "inet" ) { print $2 } else if ( $2 == "Link" ) { printf "   %s:" ,$1 } }\' |awk -F: \'{ print $1 ": " $3 }\'');
-
-echo "\n\nInitialising...\n";
 
 // Load system libs
 require 'lib/gpio.lib.php';
 require 'lib/watchdog.lib.php';
 require 'lib/mods.lib.php';
+
+
+echo "MODULES:\n";
+foreach(mods\enabledMods() as $m)
+{
+    echo "    $m\n";
+}
+
+echo "\n\nInitialising...\n";
 
 // Load module libs
 mods\runmods('mods-lib');
