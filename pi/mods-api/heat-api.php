@@ -52,7 +52,7 @@ class StatusHandler implements API\APIHandler
             }
         }
         
-        return array('now'=>date('H:i', time()), 'timezone'=>date_default_timezone_get(), 'status'=>$state, 'scheduled'=>$scheduled, 'scheduled_until'=>$scheduled_until, 'boosted'=>$boosted, 'boosted_until'=>date('H:i', $boosted_until), 'ranges'=>$ranges);
+        return array('now'=>date('H:i', time()), 'timezone'=>date_default_timezone_get(), 'status'=>$state, 'scheduled'=>$scheduled, 'scheduled_until'=>($scheduled ? $scheduled_until : ''), 'boosted'=>$boosted, 'boosted_until'=>($boosted ? date('H:i', $boosted_until) : ''), 'ranges'=>$ranges);
     }
 }
 

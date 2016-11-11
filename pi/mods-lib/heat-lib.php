@@ -96,13 +96,12 @@ class Schedule
         return 0;
     }
     
-    public function addDaily($start, $end, $state, $day=false)
+    public function addDaily($start, $end, $state, $days=false)
     {
-        // If span covers multiple days (eg 20:00 - 05:00) split it into two
+        // TODO: If span covers multiple days (eg 20:00 - 05:00) split it into two
         // If day is specified, the second part needs to be the next day!
         
-        
-        $this->addRange(array('type'=>'daily', 'day'=>$day, 'start'=>$start, 'end'=>$end, 'state'=>$state));
+        $this->addRange(array('type'=>'daily', 'days'=>$days, 'start'=>$start, 'end'=>$end, 'state'=>$state));
     }
     
     public function addTemporary($duration, $state='ON')
@@ -151,12 +150,12 @@ class Schedule
         // Daily ranges
         if($range['type'] == 'daily')
         {
-            $day = $range['day'];
+            $days = $range['days'];
             $start = $range['start'];
             $end = $range['end'];
             
             $now = date('H:i');
-            if($day == false || $day == date('N'))
+            if($days == false || in_array(date('N'), $days))
             {
             
                 if($this->timeCmp($start, $now) < 0) // has started
