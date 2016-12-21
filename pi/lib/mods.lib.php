@@ -88,9 +88,9 @@ $modstate = array();
 /**
  * Really simple class to provide shared access to persistent json objects
  */
-class JsonStore
+class JsonReader
 {
-    private $datafn, $lockfn;
+    protected $datafn, $datalockfn, $datalockfh;
 
     public function __construct($name, $dir=false)
     {
@@ -106,57 +106,14 @@ class JsonStore
             }
         }
          
-        $this->datafn = $dir.$name.'.json';
-        $this->lockfn = $dir.$name.'.lock';
-        
-        if(!file_exists($this->datafn))
-        {
-            $this->clear();
-        }
-        
-        
-        //echo "Created module store '$name' at {$this->datafn}\n";
-    }
-    
-    private $mylock = false;
-    public function lock()
-    {
-        while($this->islocked())
-        {
-            usleep(500000); // Sleep 0.5 seconds and try again
-        }
-        
-        @file_put_contents($this->lockfn, time());
-        $this->mylock = true;
-    }
-    
-    public function release()
-    {
-        $this->mylock = false;
-        
-        if(file_exists($this->lockfn))
-            unlink($this->lockfn);
-    }
-    
-    protected function islocked()
-    {
-        if(!file_exists($this->lockfn))
-            return false;
-            
-        // Locks expire after 15s
-        if(file_get_contents($this->lockfn) < time() - 15)
-            return false;
+        $this->datafn = $dir.$name.'.json'; 
     }
     
     protected function getData()
     {
-        return json_decode(file_get_contents($this->datafn), true);
-    }
-    
-    public function clear()
-    {
-        file_put_contents($this->datafn, '[]');
-        chmod($this->datafn, 0777); // So web server can edit!
+        $data = json_decode(file_get_contents($this->datafn), true);
+        
+        return is_array($data) ? $data : array();
     }
     
     public function __get($k)
@@ -170,12 +127,67 @@ class JsonStore
         
         return $data[$k];
     }
+}
+ 
+class JsonStore extends JsonReader
+{
+    public function __construct($name, $dir=false)
+    { 
+        parent::__construct($name, $dir);
+    
+        // Create a lock file so we can recreate the actual file without destroying locks etc.
+        $this->datalockfn = $this->datafn.'.lock';
+        
+        $this->datalockfh = fopen($this->datalockfn, 'w+');
+        @chmod($this->datalockfn, 0777); // So web server can edit!
+
+        if(!file_exists($this->datafn))
+        {
+            $this->clear();
+        }
+    }
+    
+    private $locked = false;
+    public function lock()
+    {
+        if($this->locked)
+            return;
+    
+        flock($this->datalockfh, LOCK_EX);
+        $this->locked = true;
+    }
+    
+    public function release()
+    {
+        if(!$this->locked)
+            return;
+    
+        flock($this->datalockfh, LOCK_UN);
+        $this->locked = false;
+    }
+    
+    public function isLocked()
+    {
+        return $this->locked;
+    }
+    
+    public function clear()
+    {
+        file_put_contents($this->datafn, '[]');
+        chmod($this->datafn, 0777); // So web server can edit!
+    }
     
     public function __set($k, $v)
     {
+        if(!($locked = $this->isLocked()))
+            $this->lock();
+        
         $data = $this->getData();
         $data[$k] = $v;
         file_put_contents($this->datafn, json_encode($data));
+        
+        if(!$locked)
+            $this->release();
     }
 }
 

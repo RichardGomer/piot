@@ -23,11 +23,38 @@ class TempHandler implements API\APIHandler
         
         $out = array();
         
-        //var_dump($store->readings);
+        if(array_key_exists('n', $args))
+        {
+            $n = (int) $args['n'];
+        }
+        else
+        {
+            $n = 3;
+        }
         
         foreach($log->getChannels() as $c)
         {
-            $out[$c] = $log->getLastReadings($c, 10);
+            $readings = $log->getLastReadings($c, $n);
+        
+            /*
+            $out[$c] = array();
+            $prev = false;
+            $prevt = false;
+            foreach($readings as $t=>$r)
+            {
+                // Remove obviously wrong readings (+/- 10C from last)
+                if($prev !== false)
+                {
+                    if($prevt > $t - 600 && abs($prev - $r) > 10)
+                        continue;
+                }
+            
+                $out[$c][$t] = number_format($r, 1, '.', '');
+                $prevt = $t;
+                $prev = $r;
+            }*/
+            
+            $out[$c] = $readings;
         }
         
         return $out;
@@ -35,6 +62,7 @@ class TempHandler implements API\APIHandler
 }
 
 
-$API->addOperation(false, array('temp'), new TempHandler());
+$API->addOperation(false, array('temp', 'n'), $th = new TempHandler());
+$API->addOperation(false, array('temp'), $th);
 
 ?>

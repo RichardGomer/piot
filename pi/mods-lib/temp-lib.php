@@ -8,11 +8,6 @@ class TempLog
     public function __construct(\mods\JSONStore $store)
     {
         $this->store = $store;
-        
-        if(!is_array($this->store->readings))
-        {
-            $this->store->readings = array();
-        }
     }
     
     public function getChannels()
@@ -22,7 +17,14 @@ class TempLog
     
     public function getLastReadings($channel, $n=1)
     {
-        return array_slice($this->store->readings[$channel], $n * -1);
+        $readings = $this->store->readings;
+    
+        if($n >= count($readings[$channel]))
+        {
+            return $readings[$channel];
+        }
+        
+        return array_slice($readings[$channel], $n * -1, $n, true);
     }
 }
 
@@ -36,10 +38,12 @@ class OregonLogger extends TempLog
         $this->proc = new Thread('sudo ./mods-bin/oregonrcv');
     }
     
-    private $maxreadings = 600; // Max readings per channel
+    private $maxreadings = 72 * 24 * 60 / 5; // Max readings per channel (we store a max of 1 per 5 mins, so 14 * 24 * 60 = 14 days)
+    private $resolution = 300; // 5 minute resolution
     private $readings = array();
     protected function readBuffer()
     {
+        $this->store->lock();
         $readings = $this->store->readings;
     
         $lines = $this->proc->read();
@@ -60,12 +64,14 @@ class OregonLogger extends TempLog
                     unset($readings[$channel][array_keys($readings[$channel])[0]]);
                 }
                 
-                $readings[$channel][date('Y-m-d H:i')] = $temp;
-                echo "-> $channel $temp\n";
+                $time = floor(time() / $this->resolution) * $this->resolution;
+                $readings[$channel][$time] = $temp;
+                echo "-> $time: $channel $temp\n";
             }
         }
         
         $this->store->readings = $readings; // sync with store
+        $this->store->release();
     }
     
     public function log()
