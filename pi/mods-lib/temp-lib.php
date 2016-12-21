@@ -43,10 +43,13 @@ class OregonLogger extends TempLog
     private $readings = array();
     protected function readBuffer()
     {
-        $this->store->lock();
-        $readings = $this->store->readings;
-    
         $lines = $this->proc->read();
+        
+        echo "Get lock on temp store  ";
+        $this->store->lock();
+        echo " [ OK ]\n";
+        $readings = $this->store->readings;
+        
         foreach($lines as $l)
         {
             $l = trim($l);
@@ -72,6 +75,7 @@ class OregonLogger extends TempLog
         
         $this->store->readings = $readings; // sync with store
         $this->store->release();
+        echo "Released lock on temp store\n";
     }
     
     public function log()

@@ -36,7 +36,6 @@ class TempHandler implements API\APIHandler
         {
             $readings = $log->getLastReadings($c, $n);
         
-            /*
             $out[$c] = array();
             $prev = false;
             $prevt = false;
@@ -52,9 +51,7 @@ class TempHandler implements API\APIHandler
                 $out[$c][$t] = number_format($r, 1, '.', '');
                 $prevt = $t;
                 $prev = $r;
-            }*/
-            
-            $out[$c] = $readings;
+            }
         }
         
         return $out;
