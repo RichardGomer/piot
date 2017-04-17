@@ -31,6 +31,22 @@ $API->addAuth($auth, array());
 mods\runmods('../mods-lib', array('API'=>$API)); // Load global module libs
 mods\runmods('../mods-api', array('API'=>$API)); // Load API mods
 
+class ModListHandler implements API\APIHandler
+{
+    public function __construct()
+    {
+
+    }
+    
+    public function handleCall($args)
+    {
+        return mods\enabledMods();
+    }
+}
+
+
+$API->addOperation(false, array('mods'), new ModListHandler());
+
 $API->handle();
 
 

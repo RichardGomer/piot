@@ -108,8 +108,8 @@ foreach(
     $h = new StatusHandler($pin_num, $pin_on, $sched);
     $API->addOperation(false, array($service.'-status'), $h);
 
-    // Boost - 30 mins
-    $h = new StartBoostHandler($sched, 30);
+    // Boost - 60 mins
+    $h = new StartBoostHandler($sched, 60);
     $API->addOperation(false, array($service.'-boost'), $h);
 
     

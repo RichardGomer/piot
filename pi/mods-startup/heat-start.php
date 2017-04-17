@@ -27,15 +27,15 @@ $HWATER = new TimedRelay($hwpin, $HWATER_SCHED);
 
 
 // Set basic schedule
-$HEATING_SCHED->addDaily('06:30', '08:00', 'ON');
-$HEATING_SCHED->addDaily('17:30', '19:00', 'ON');
-$HEATING_SCHED->addDaily('21:00', '21:30', 'ON');
+$HEATING_SCHED->addDaily('07:00', '09:00', 'ON');
+$HEATING_SCHED->addDaily('17:30', '19:30', 'ON');
+$HEATING_SCHED->addDaily('21:30', '22:30', 'ON');
 
 $HEATING_SCHED->addDaily('11:00', '13:00', 'ON', array(6,7)); // Come on at lunch on sat/sun
 
-$HWATER_SCHED->addDaily('06:30', '08:30', 'ON');
+$HWATER_SCHED->addDaily('06:30', '10:30', 'ON');
 $HWATER_SCHED->addDaily('17:30', '19:00', 'ON');
-$HWATER_SCHED->addDaily('21:00', '21:30', 'ON');
+$HWATER_SCHED->addDaily('21:30', '22:00', 'ON');
 
 // Store state...
 $MOD['HWATER_SCHED'] = $HWATER_SCHED;
