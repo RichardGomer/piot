@@ -137,6 +137,20 @@ class Pin
 	{
 	    return $this->wpn;
 	}
+	
+	// Get phsyical pin number of the pin
+	public function getPhys()
+	{
+	$info = self::getAllStatus();
+
+		foreach($info as $pin)
+		{
+			if($pin['wPi'] == $this->wpn)
+			{
+				return $pin['Physical'];
+			}
+		}
+	}
 
 	public function getValue()
 	{

@@ -21,6 +21,8 @@ echo passthru('/sbin/ifconfig |grep -B1 "inet addr" |awk \'{ if ( $1 == "inet" )
 require 'lib/gpio.lib.php';
 require 'lib/watchdog.lib.php';
 require 'lib/mods.lib.php';
+require 'lib/log.lib.php';
+require 'lib/thread.lib.php';
 
 
 echo "MODULES:\n";

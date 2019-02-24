@@ -5,7 +5,7 @@ sleep 4
 
 # Install deps
 apt-get update
-apt-get -y install php5-cli lighttpd php5-cgi php5-json wiringpi
+apt-get -y install php-cli lighttpd php-cgi php-json wiringpi
 
 # Enable PHP support in Lighttpd
 lighttpd-enable-mod fastcgi

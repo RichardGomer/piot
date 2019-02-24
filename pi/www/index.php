@@ -8,10 +8,14 @@
  
 require '../common.php';
  
-include '../lib/gpio.lib.php'; // GPIO library
 include '../lib/quapi/api.lib.php';
 include 'auth.lib.php';
+
+// Standard PiOT libs
+include '../lib/gpio.lib.php'; // GPIO library
 include '../lib/mods.lib.php';
+include '../lib/log.lib.php';
+require '../lib/thread.lib.php';
 
 use QuickAPI as API;
 
