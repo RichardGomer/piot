@@ -1,8 +1,8 @@
 <?php
 
-$hole_depth = 70; // Depth of hole (from sensor) in cm
-$pump_on = 40; // Pump comes on when this level is reached (in cm)
-$pump_off = 15; // And goes off when this level is reached (in cm)
+$hole_depth = 48; // Depth of hole (from sensor) in cm
+$pump_on = 12; // Pump comes on when this level is reached (in cm)
+$pump_off = 8; // And goes off when this level is reached (in cm)
 
 // Obviously, pump_off must be lower than pump_on; and there should be a reasonable range
 // to avoid flip-flopping, and to ensure water is actually drained (instead of just going

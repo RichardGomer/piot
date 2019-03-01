@@ -54,7 +54,7 @@ while n < NUM:
                 n = n + 1
                 
                 pulse_duration = pulse_end - pulse_start
-                distance = pulse_duration * 34300 / 4; # Should be /2 (RTT) but that givews double the actual distance...
+                distance = pulse_duration * 34300 / 2;
                 distance = round(distance, 2)
 
                 print "Distance:",distance,"cm"," (t=",round(pulse_duration,6),")"

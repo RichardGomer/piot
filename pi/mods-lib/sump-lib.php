@@ -20,7 +20,7 @@
   */
  class DblRelay
  {
-        public function __construct(\GPIO\OutputPin $a, \GPIO\OutputPin $b, $reverse=false)
+        public function __construct(\GPIO\OutputPin $a, \GPIO\OutputPin $b, $reverse=true)
         {
                 $this->reverse = $reverse;
                 $this->a = $a;
@@ -128,7 +128,7 @@
                         return $array[$keys[0]];
                 }
                 elseif(count($array) % 2 == 0) {
-                        return $array[$keys[$mid]] + $array[$keys[$mid+1]];
+                        return 0.5 * ($array[$keys[$mid]] + $array[$keys[$mid+1]]);
                 }
                 else {
                         return $array[$keys[$mid]];
