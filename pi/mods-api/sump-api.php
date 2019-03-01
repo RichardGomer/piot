@@ -31,7 +31,10 @@ class SumpHandler implements API\APIHandler
                     $n = 10;
                 }
                 
+                $info = new \mods\JsonReader('sumpinfo');
+                
                 return array(
+                        'params' => array('pump_on' => $info->on_level . "cm", 'pump_off' => $info->off_level . "cm", 'hole_depth' => $info->hole_depth . "cm"),
                         'pump' => $log->getLastReadings('pump', $n),
                         'depth' => $log->getLastReadings('depth', $n)
                 );

@@ -32,6 +32,7 @@ class StatusHandler implements API\APIHandler
         return array(
             'uptime'=>$upinfo[1],
             'load'=>$upinfo[2],
+            'cpu_temp'=>$cput,
             'kernel'=>$kernel,
             'host'=>$host,
             'modules'=>$modules,
