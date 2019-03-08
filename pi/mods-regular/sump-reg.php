@@ -31,6 +31,7 @@ $log->store('depth', $depth, $MOD['PUMP_STATUS'] == true ? 10 : 120);
 if($depth > $pump_on && $MOD['PUMP_STATUS'] != true && time() - $MOD['last_on'] > $MOD['min_interval']) {
         echo "BEGIN PUMPING\n";
         $MOD['PUMP_STATUS'] = true;
+        $MOD['last_on'] = time();
         $log->store('pump', 'ON', 1);
         $pump->on();
 }
