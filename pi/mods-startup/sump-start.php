@@ -1,8 +1,8 @@
 <?php
 
-$hole_depth = 48; // Depth of hole (from sensor) in cm
-$pump_on = 11; // Pump comes on when this level is reached (in cm)
-$pump_off = 5; // And goes off when this level is reached (in cm)
+$hole_depth = 64; // Depth of hole (from sensor) in cm
+$pump_on = 40; // Pump comes on when this level is reached (in cm)
+$pump_off = 15; // And goes off when this level is reached (in cm)
 
 $min_interval = 3600; // Minimum amount of time (s) between the start of pumping episodes
 

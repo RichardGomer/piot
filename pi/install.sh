@@ -19,4 +19,5 @@ lighttpd-enable-mod fastcgi-php
 systemctl enable lighttpd.service
 
 # Register as a service
-systemctl enable /home/pi/piot/pi/piot.service
+cp piot.service /etc/systemd/system/piot.service
+systemctl enable piot.service
